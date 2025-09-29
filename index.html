@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Anamnese KSTEAM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --main-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --title: #1B1B1B;
+  --subtitle: #7E8DAA;
+  --label: rgba(20,21,23,.56);
+  --input-bg: #fff;
+  --input-stroke: #E1E5EF;
+  --input-radius: 10px;
+  --section-bg: #fff;
+  --section-radius: 18px;
+  --section-shadow: 0 16px 32px 0 rgba(78,80,154,0.08), 0 1.8px 2.7px 0 rgba(100,100,158,0.06);
+  --btn-bg: #1B1B1B; --btn-radius: 8px; --btn-color: #fff;
+  --radio-active: #6C47FF; --radio-inactive: #D3D5DF;
+  --switch-on: #705CF6; --switch-off: #CCCDE2;
+}
+body {font-family: var(--main-font); color: var(--title); background: #F8F8FA; min-height: 100vh;}
+.page-shell{display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.form-card{margin:40px auto;box-shadow: var(--section-shadow);border-radius: var(--section-radius);background:var(--section-bg);width:100vw;max-width:1024px;min-width:320px;padding:42px 0;}
+.head-center{text-align:center;}
+h2{font-size:1.40em;font-weight:700;color:var(--title);margin-bottom:0;margin-top:0;}
+.form-desc{color:var(--subtitle);font-size:0.99em;margin:7px 0 24px 0;}
+.steps-bar{display:flex;justify-content:center;align-items:center;gap:2px;margin:16px 0 25px 0;position:relative;}
+.step-backbtn{background:none;border:none;outline:none;display:flex;align-items:center;justify-content:center;position: absolute;left:-53px;top:50%;transform:translateY(-50%);cursor:pointer;padding:8px;z-index:3;opacity:1;}
+.step-backbtn:disabled{opacity:.3;}
+.step-bullet{display:flex;align-items:center;gap:9px;padding:8px 20px 8px 12px;cursor:pointer;background:none;border:none;transition:.15s;}
+.step-dot{width:50px;height:50px;border-radius:50%;border:2.2px solid var(--radio-inactive);display:flex;align-items:center;justify-content:center;font-size:1.8em;background:#fff;font-weight:700;transition:.13s;}
+.step-bullet.active .step-dot{border-color:var(--radio-active);}
+.step-bullet.completed .step-dot{border-color:var(--switch-on);background:var(--switch-on);color:#fff;}
+.step-label{color:var(--label);font-weight:600;font-size:1em;transition:.17s;margin:0 0 0 2px;}
+.step-bullet.active .step-label{color:var(--title);}
+.step-bullet.completed .step-label{color:var(--switch-on);}
+.step-arrow{width:19px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--input-stroke);}
+.section-block{margin:0 auto 0 auto;max-width:95vw;width:820px;}
+.block-title{color:var(--title);font-weight:600;margin:0 0 10px 0;font-size:1.08em;}
+label{color:var(--label);font-weight:500;margin-bottom:6px;font-size:0.98em;display:block;}
+input,select,textarea{width:100%;padding:13px 12px;box-sizing:border-box;font-family:var(--main-font);font-size:1em;color:var(--title);border-radius:var(--input-radius);border:1.7px solid var(--input-stroke);background:var(--input-bg);margin:0;transition:border-color .14s,box-shadow .15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--radio-active);}
+textarea{resize:vertical;min-height:75px;}
+input[type="file"]{background:none;border:none;padding:0;margin-top:5px;}
+input[type="file"]::-webkit-file-upload-button{background:var(--btn-bg);color:var(--btn-color);border-radius:6px;padding:7px 15px;font-weight:600;border:none;cursor:pointer;margin-right:8px;}
+input[type="file"]:hover::-webkit-file-upload-button{background:#222;}
+input[type="file"]:active::-webkit-file-upload-button{background:#444;}
+.row-2{display:flex;gap:14px;}
+.row-2 .form-field{flex:1;}
+.form-field{margin-bottom:19px;position:relative;}
+.custom-radio-group{display:flex;gap:17px;}
+.custom-radio{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:1em;font-weight:500;}
+.custom-radio input[type=radio]{display:none;}
+.custom-radio-icon{width:19px;height:19px;border-radius:50%;background:#fff;border:2.2px solid var(--radio-inactive);display:inline-flex;align-items:center;justify-content:center;transition:border .15s;}
+.custom-radio input:checked + .custom-radio-icon{border:2.4px solid var(--radio-active);}
+.custom-radio-indicator{width:10px;height:10px;background:transparent;border-radius:50%;transition:background .1s;}
+.custom-radio input:checked + .custom-radio-icon .custom-radio-indicator{background:var(--radio-active);}
+.bottom-actions{display:flex;gap:18px;margin:33px 0 0 0;justify-content:center;}
+.btn{border-radius:var(--btn-radius);font-family:var(--main-font);font-weight:700;border:none;cursor:pointer;font-size:1em;padding:0 34px;height:45px;min-width:108px;letter-spacing:.05em;transition:background .18s,color .18s;}
+.btn-primary{background:var(--btn-bg);color:var(--btn-color);}
+.btn-outline{background:#fff;color:var(--btn-bg);border:1.1px solid var(--btn-bg);}
+.btn:disabled{opacity:0.6;}
+.final-step{text-align:center;border-radius:12px;padding:20px 8px;margin:25px 0 4px 0;background:#F8F8FA;color:var(--btn-bg);font-size:1.08em;}
+.final-step strong{color:var(--btn-bg);}
+.final-step .btn{margin:12px 8px 0 8px;}
+.logo-header {
+  display: block;
+  margin: 0 auto 60px auto;
+  max-width: 170px;
+  width: 60vw;
+  height: auto;
+}
+@media (max-width: 700px) {
+  .logo-header {
+    max-width: 200px;
+    width: 60vw;
+    margin-bottom: 60px;
+  }
+}
+@media (min-width: 1000px) {
+  .logo-header {
+    max-width: 350px;
+    width: 25vw;
+  }
+}
+@media (max-width:1100px){.section-block{width:90vw;}.form-card{padding:18px 0;}}
+@media (max-width:700px){.form-card{border-radius:0;box-shadow:none;padding:10px 0;}.section-block{max-width:99vw;}.head-center{padding:10px 8px;}}
+</style>
+</head>
+<body>
+<div class="page-shell">
+  <div class="form-card">
+    <div class="head-center">
+      <img src="/Volumes/SSD/_JOBS/Klinger/Ativo 1.png" alt="Logo" class="logo-header" />
+      <h2>Formulário de Anamnese KSTEAM</h2>
+    <div class="form-desc">Preencha os dados para analisarmos seu perfil.</div>
+      <div class="steps-bar" id="stepsBar">
+        <div class="step-bullet active" data-step="0"><span class="step-dot">1</span><span class="step-label">Pessoal</span></div>
+        <span class="step-arrow"><svg width="19" height="19" viewBox="0 0 23 23"><polyline points="8,5 15,12 8,19" fill="none" stroke="#E1E5EF" stroke-width="2.2"/></svg></span>
+        <div class="step-bullet" data-step="1"><span class="step-dot">2</span><span class="step-label">Treino</span></div>
+        <span class="step-arrow"><svg width="19" height="19" viewBox="0 0 23 23"><polyline points="8,5 15,12 8,19" fill="none" stroke="#E1E5EF" stroke-width="2.2"/></svg></span>
+        <div class="step-bullet" data-step="2"><span class="step-dot">3</span><span class="step-label">Alimentação</span></div>
+        <span class="step-arrow"><svg width="19" height="19" viewBox="0 0 23 23"><polyline points="8,5 15,12 8,19" fill="none" stroke="#E1E5EF" stroke-width="2.2"/></svg></span>
+        <div class="step-bullet" data-step="3"><span class="step-dot">4</span><span class="step-label">Rotina</span></div>
+        <span class="step-arrow"><svg width="19" height="19" viewBox="0 0 23 23"><polyline points="8,5 15,12 8,19" fill="none" stroke="#E1E5EF" stroke-width="2.2"/></svg></span>
+        <div class="step-bullet" data-step="4"><span class="step-dot">5</span><span class="step-label">Observações</span></div>
+      </div>
+    </div>
+    <form id="multiStepForm" autocomplete="on" enctype="multipart/form-data">
+      <!-- MULTISTEP SESSÕES -->
+      <div id="step-content-0" class="section-block">
+        <div class="block-title">Informações pessoais</div>
+        <div class="row-2">
+          <div class="form-field"><label>Nome completo*</label><input required name="Nome completo"></div>
+          <div class="form-field"><label>Data de nascimento*</label><input required type="date" name="Nascimento"></div>
+        </div>
+        <div class="row-2">
+          <div class="form-field"><label>Sexo*</label><select required name="Sexo"><option value="">Selecione</option><option>Masculino</option><option>Feminino</option><option>Outro</option></select></div>
+          <div class="form-field"><label>Peso atual (kg)*</label><input required type="number" name="Peso atual"></div>
+        </div>
+        <div class="row-2">
+          <div class="form-field"><label>Altura (cm)*</label><input required type="number" name="Altura"></div>
+          <div class="form-field"><label>Profissão*</label><input required type="text" name="Profissão"></div>
+        </div>
+        <div class="form-field"><label>Cidade/Estado*</label><input required type="text" name="CidadeEstado"></div>
+      </div>
+      <div id="step-content-1" class="section-block" style="display:none">
+        <div class="block-title">Objetivos com o treinamento</div>
+        <div class="row-2">
+          <div class="form-field"><label>Objetivo principal*</label>
+            <select required name="Objetivo principal"><option value="">Selecione...</option><option>Emagrecimento</option><option>Hipertrofia</option><option>Definição muscular</option><option>Ganho de força</option><option>Saúde e bem-estar</option><option>Outro</option></select>
+          </div>
+          <div class="form-field"><label>Frequência para treinar/semana*</label>
+            <select required name="Frequência para treinar"><option value="">Selecione...</option><option>2x por semana</option><option>3x por semana</option><option>4x por semana</option><option>5x por semana</option><option>Todos os dias</option></select>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="form-field"><label>Local do treino*</label>
+            <select required name="Local do treino"><option value="">Selecione...</option><option>Academia</option><option>Casa</option><option>Ao ar livre</option></select>
+          </div>
+          <div class="form-field"><label>Tempo médio por treino (min)*</label><input required type="number" name="Tempo médio por treino"></div>
+        </div>
+        <div class="form-field"><label>Nível atual*</label>
+          <div class="custom-radio-group">
+            <label class="custom-radio"><input required type="radio" name="Nível atual" value="Iniciante"><span class="custom-radio-icon"><span class="custom-radio-indicator"></span></span>Iniciante</label>
+            <label class="custom-radio"><input required type="radio" name="Nível atual" value="Intermediário"><span class="custom-radio-icon"><span class="custom-radio-indicator"></span></span>Intermediário</label>
+            <label class="custom-radio"><input required type="radio" name="Nível atual" value="Avançado"><span class="custom-radio-icon"><span class="custom-radio-indicator"></span></span>Avançado</label>
+          </div>
+        </div>
+        <div class="form-field"><label>Possui lesão ou limitação física?*</label><textarea required name="Lesão ou limitação"></textarea></div>
+        <div class="form-field"><label>Modalidade esportiva praticada?*</label><textarea required name="Modalidade esportiva"></textarea></div>
+        <div class="form-field"><label>Exercícios que gosta/facilidade*</label><textarea required name="Exercícios que gosta"></textarea></div>
+        <div class="form-field"><label>Exercícios que não gosta/dificuldade*</label><textarea required name="Exercícios que não gosta"></textarea></div>
+        <div class="form-field"><label>Horário preferido para treinar*</label>
+          <div class="custom-radio-group">
+            <label class="custom-radio"><input required type="radio" name="Horário preferido" value="Manhã"><span class="custom-radio-icon"><span class="custom-radio-indicator"></span></span>Manhã</label>
+            <label class="custom-radio"><input required type="radio" name="Horário preferido" value="Tarde"><span class="custom-radio-icon"><span class="custom-radio-indicator"></span></span>Tarde</label>
+            <label class="custom-radio"><input required type="radio" name="Horário preferido" value="Noite"><span class="custom-radio-icon"><span class="custom-radio-indicator"></span></span>Noite</label>
+          </div>
+        </div>
+        <div class="form-field"><label>Acompanhamento com personal?*</label>
+          <input required type="text" name="Com personal" placeholder="Se sim, detalhe...">
+        </div>
+      </div>
+      <div id="step-content-2" class="section-block" style="display:none">
+        <div class="block-title">Dieta e alimentação</div>
+        <div class="form-field"><label>Faz dieta atualmente? Qual estilo?*</label>
+          <input required name="Dieta atual"></div>
+        <div class="form-field"><label>Acompanhamento com nutricionista?*</label>
+          <input required name="Nutricionista"></div>
+        <div class="row-2">
+          <div class="form-field"><label>Alergia ou intolerância alimentar?*</label><input required name="Alergia alimentares"></div>
+          <div class="form-field"><label>Restrições (ex: não come carne, evita glúten)*</label><input required name="Restrições"></div>
+        </div>
+        <div class="form-field"><label>Horários fixos para refeições?*</label>
+          <input required name="Horários refeições"></div>
+        <div class="form-field"><label>Como é sua rotina alimentar?*</label>
+          <textarea required name="Rotina alimentar"></textarea></div>
+        <div class="form-field"><label>Costuma comer fora? Onde?*</label>
+          <input required name="Comer fora"></div>
+        <div class="form-field"><label>Quais refeições faz ao longo do dia?*</label>
+          <textarea required name="Refeições"></textarea></div>
+        <div class="form-field"><label>Bebidas consumidas com frequência*</label>
+          <input required name="Bebidas"></div>
+        <div class="form-field"><label>Consome suplementos? Quais e horários?*</label>
+          <textarea required name="Suplementos"></textarea></div>
+        <div class="form-field"><label>Alimentos que gosta muito*</label>
+          <textarea required name="Alimentos gosta"></textarea></div>
+        <div class="form-field"><label>Alimentos que não gosta*</label>
+          <textarea required name="Alimentos não gosta"></textarea></div>
+        <div class="form-field"><label>Facilidade/dificuldade em seguir plano alimentar?*</label>
+          <input required name="Facilidade plano alimentar"></div>
+        <div class="form-field"><label>Costume de beliscar/sente muita fome em algum horário?*</label>
+          <input required name="Beliscar ou fome"></div>
+      </div>
+      <div id="step-content-3" class="section-block" style="display:none">
+        <div class="block-title">Rotina</div>
+        <div class="form-field"><label>Como é sua rotina de trabalho/estudo?*</label>
+          <textarea required name="Rotina trabalho"></textarea></div>
+        <div class="row-2">
+          <div class="form-field"><label>Quantas horas dorme por noite, em média?*</label>
+            <select required name="Horas de sono">
+              <option value="">Selecione</option>
+              <option>2h por noite</option>
+              <option>4h por noite</option>
+              <option>6h por noite</option>
+              <option>8h por noite</option>
+              <option>mais de 10h</option>
+            </select>
+          </div>
+          <div class="form-field"><label>Nível de estresse atual (0-10)*</label><input required name="Nível de estresse" type="number" min="0" max="10"></div>
+        </div>
+        <div class="form-field"><label>Tem filhos ou cuida de alguém que influencia na rotina?*</label>
+          <input required name="Responsabilidades"></div>
+        <div class="form-field"><label>Algo relevante para o planejamento (viagens, plantões etc)?</label>
+          <textarea name="Detalhes relevantes"></textarea></div>
+      </div>
+      <div id="step-content-4" class="section-block" style="display:none">
+        <div class="block-title">Observações</div>
+        <div class="form-field"><label>Compartilhe algo extra sobre sua rotina, motivação ou dificuldades</label>
+          <textarea name="Observações finais"></textarea></div>
+        <div class="form-field">
+          <label>Faça upload de fotos do seu físico (frente, costas e lateral)*:</label>
+          <input required type="file" name="Fotos" multiple accept="image/png, image/jpeg, image/jpg">
+        </div>
+      </div>
+      <div id="step-final" class="final-step" style="display:none;">
+        <div>
+          <strong>Finalize seu envio manual:</strong><br><br>
+          Seu formulário está pronto, mas <b>não foi enviado automaticamente</b>! <br>
+          Baixe o PDF das respostas ou envie pelo WhatsApp.<br>
+          <span style="color: #e16d45;">Você precisa anexar as fotos ao envio!</span>
+        </div>
+        <button type="button" id="downloadPDFBtn" class="btn btn-primary">Baixar PDF</button>
+        <button type="button" id="sendWhatsBtn" class="btn btn-outline">Enviar para WhatsApp</button>
+        <button type="button" id="novoFormBtn" class="btn btn-outline" style="margin-top:13px;">Novo formulário</button>
+      </div>
+      <div class="bottom-actions">
+        <button type="button" id="backBtn" class="btn btn-outline" disabled>Voltar</button>
+        <button type="button" id="nextBtn" class="btn btn-primary">Continuar</button>
+        <button type="submit" id="sendBtn" class="btn btn-primary" style="display:none;">Enviar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+const totalSteps = 5; let currentStep = 0;
+const stepsBar = document.querySelectorAll('.step-bullet');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const sendBtn = document.getElementById('sendBtn');
+const stepBackBtn = document.getElementById('stepBackBtn');
+const stepWraps = Array.from({length:totalSteps}).map((_,i)=>document.getElementById('step-content-'+i));
+function updateSteps(){
+  stepWraps.forEach((el,i)=>{ if(el) el.style.display=i===currentStep?"block":"none"; });
+  stepsBar.forEach((el,i)=>{el.classList.toggle("completed",i<currentStep);el.classList.toggle("active",i===currentStep);});
+  if (backBtn) backBtn.disabled = currentStep===0;
+  if (nextBtn) nextBtn.style.display = currentStep<totalSteps-1 ? "" : "none";
+  if (sendBtn) sendBtn.style.display = currentStep===totalSteps-1 ? "" : "none";
+  const stepFinal = document.getElementById("step-final");
+  if (stepFinal) stepFinal.style.display = "none";
+  if (stepBackBtn) stepBackBtn.disabled = currentStep===0;
+}
+if (nextBtn) nextBtn.onclick = ()=>{if(validateStep(currentStep)){if(currentStep<totalSteps-1) currentStep++; updateSteps();}};
+if (backBtn) backBtn.onclick = ()=>{if(currentStep>0) currentStep--; updateSteps();};
+if (stepBackBtn) stepBackBtn.onclick = ()=>{if(currentStep>0) currentStep--; updateSteps();};
+stepsBar.forEach((el,i)=>{el.onclick=()=>{if(validateStep(currentStep)){currentStep=i;updateSteps();}}});
+function validateStep(idx){
+  let valid=true;
+  if (stepWraps[idx]) stepWraps[idx].querySelectorAll("[required]").forEach(f=>{
+    f.style.borderColor = ''; if(!f.value.trim() && !(f.type==="file"&&f.files.length)){f.style.borderColor="#E71836";valid=false;}
+  }); return valid;
+}
+const form = document.getElementById('multiStepForm'); let lastPDF=null, lastFilename="";
+function getAnswers(){
+  let result={}, files=[];
+  Array.from(form.querySelectorAll("input,select,textarea")).forEach(f=>{
+    if(f.type==="radio"&&!f.checked) return;
+    if(f.type==="checkbox") result[f.name]=f.checked?"Sim":"Não";
+    else if(f.type==="file"&&f.files.length>0){
+      files=Array.from(f.files); result[f.name]=files;
+    } else if(f.value&&f.name) result[f.name]=f.value;
+  });
+  result["_fotos"]=files;
+  return result;
+}
+function generatePDF() {
+  let a = getAnswers();
+  let patientName = (a["Nome completo"] || "sem-nome").replace(/[^a-zA-Z0-9-_]/g, "_");
+  let d = new Date(),dstr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}-${String(d.getHours()).padStart(2,"0")}-${String(d.getMinutes()).padStart(2,"0")}`;
+  let filename = `${patientName}-anamnese-ksteam-${dstr}.pdf`;
+  lastFilename = filename;
+  let doc = new window.jspdf.jsPDF();
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text("Anamnese KSTEAM", 24, 22);
+  doc.setFontSize(12);
+  let y = 38;
+  ["Informações pessoais", "Objetivos com o treinamento", "Dieta e alimentação", "Rotina", "Observações"].forEach((sec, idx) => {
+    doc.setFont("helvetica", "bold");
+    doc.text(sec, 21, y);
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    for (const k in a) {
+      if (
+        (idx == 0 && ["Nome completo", "Nascimento", "Sexo", "Peso atual", "Altura", "Profissão", "CidadeEstado"].includes(k)) ||
+        (idx == 1 && k.match(/Objetivo|Frequência|Local do treino|Tempo médio|Nível atual|Lesão|Modalidade|Exercícios|Horário|Com personal/)) ||
+        (idx == 2 && k.match(/Dieta|Nutricionista|Alergia|Restrições|Horários refeições|Rotina alimentar|Comer fora|Refeições|Bebidas|Suplementos|Alimentos|Facilidade|Beliscar/)) ||
+        (idx == 3 && k.match(/Rotina trabalho|Horas de sono|Nível de estresse|Responsabilidades|Detalhes/)) ||
+        (idx == 4 && k.match(/Observações finais/))
+      ) {
+        doc.text(`${k}: ${a[k]}`, 22, y);
+        y += 7;
+        if (y > 245) {
+          doc.addPage();
+          y = 22;
+        }
+      }
+    }
+    y += 4;
+  });
+  // IMAGENS - patch robusto
+  if (a["_fotos"] && a["_fotos"].length > 0) {
+    doc.addPage();
+    let pdfW = doc.internal.pageSize.getWidth(), pdfH = doc.internal.pageSize.getHeight();
+    let yImg = 22, margin = 22, maxW = pdfW-margin*2, spacing = 15;
+    let pxPerMm = 3.7795275591;
+    doc.setFont("helvetica", "bold");
+    doc.text("Fotos em anexo:", margin, yImg);
+    yImg += 8;
+    let fileList = a["_fotos"];
+    function processImage(idxImg) {
+      if (idxImg >= fileList.length) {
+        doc.save(lastFilename);
+        lastPDF = doc;
+        return;
+      }
+      const file = fileList[idxImg], fr = new FileReader();
+      fr.onload = function () {
+        let img = fr.result, image = new window.Image();
+        image.onload = function () {
+          let iw = image.width, ih = image.height;
+          let scale = (maxW * pxPerMm)/iw;
+          let sw = maxW, sh = ih * scale / pxPerMm;
+          if ((sh + margin*2) > pdfH) {
+            sh = pdfH - margin*2;
+            sw = iw * (sh * pxPerMm / ih) / pxPerMm;
+          }
+          if (yImg + sh + margin > pdfH) {
+            doc.addPage();
+            yImg = margin;
+          }
+          doc.addImage(img, "JPEG", margin, yImg, sw, sh, "", "FAST");
+          yImg += sh + spacing;
+          setTimeout(()=>processImage(idxImg + 1), 0);
+        };
+        image.src = img;
+      };
+      fr.readAsDataURL(file);
+    }
+    processImage(0);
+  } else {
+    doc.save(lastFilename);
+    lastPDF = doc;
+  }
+}
+function attachFinalStepBtns() {
+  let loaded = 0;
+  function tryAttach() {
+    var pdfBtn = document.getElementById('downloadPDFBtn');
+    var whatsBtn = document.getElementById('sendWhatsBtn');
+    var novoBtn = document.getElementById('novoFormBtn');
+    if (pdfBtn && whatsBtn && novoBtn) {
+      pdfBtn.onclick = function() { if (lastPDF && lastFilename) lastPDF.save(lastFilename);};
+      whatsBtn.onclick = function() {
+        let a=getAnswers(),msg="📝 *ANAMNESE KSTEAM*\n";
+        for (const k in a)
+          if(k!="_fotos"&&k!=="Fotos") msg+=`*${k}:* ${a[k]}\n`;
+        if(a["_fotos"]&&a["_fotos"].length>0){
+          msg+="\n[ANEXE as fotos ao enviar pelo WhatsApp!]\n";
+          msg+= a["_fotos"].map(f=>`- ${f.name||f}`).join("\n");
+        }
+        const phone="5535988318991";
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,"_blank");
+      };
+      novoBtn.onclick = function() {
+        form.reset(); lastPDF=null; lastFilename="";
+        currentStep=0;updateSteps();
+        if(nextBtn) nextBtn.style.display = "";
+        if(backBtn) backBtn.style.display = "";
+        if(stepBackBtn) stepBackBtn.style.display = "";
+        const stepFinal = document.getElementById("step-final");
+        if(stepFinal) stepFinal.style.display = "none";
+      };
+    } else if (loaded < 20) { loaded+=1; setTimeout(tryAttach,80);}
+  }
+  setTimeout(tryAttach,80);
+}
+form.onsubmit = function(e){
+  e.preventDefault();
+  if(!validateStep(currentStep)) return;
+  generatePDF();
+  stepWraps.forEach((el)=>{if(el)el.style.display="none";});
+  stepsBar.forEach((el)=>el.classList.remove("completed","active"));
+  const stepFinal = document.getElementById("step-final");
+  if(stepFinal) stepFinal.style.display="block";
+  if(nextBtn) nextBtn.style.display = "none";
+  if(backBtn) backBtn.style.display = "none";
+  if(sendBtn) sendBtn.style.display = "none";
+  if(stepBackBtn) stepBackBtn.style.display = "none";
+  attachFinalStepBtns();
+};
+updateSteps();
+</script>
+</body>
+</html>
