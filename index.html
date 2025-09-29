@@ -389,7 +389,7 @@ function attachFinalStepBtns() {
           msg+="\n[ANEXE as fotos ao enviar pelo WhatsApp!]\n";
           msg+= a["_fotos"].map(f=>`- ${f.name||f}`).join("\n");
         }
-        const phone="5535988318991";
+        const phone="553587176980";
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,"_blank");
       };
       novoBtn.onclick = function() {
