@@ -8,14 +8,9 @@
 <style>
 :root {
   --main-font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --title: #1B1B1B;
-  --subtitle: #7E8DAA;
-  --label: rgba(20,21,23,.56);
-  --input-bg: #fff;
-  --input-stroke: #E1E5EF;
-  --input-radius: 10px;
-  --section-bg: #fff;
-  --section-radius: 18px;
+  --title: #1B1B1B; --subtitle: #7E8DAA; --label: rgba(20,21,23,.56);
+  --input-bg: #fff; --input-stroke: #E1E5EF; --input-radius: 10px;
+  --section-bg: #fff; --section-radius: 18px;
   --section-shadow: 0 16px 32px 0 rgba(78,80,154,0.08), 0 1.8px 2.7px 0 rgba(100,100,158,0.06);
   --btn-bg: #1B1B1B; --btn-radius: 8px; --btn-color: #fff;
   --radio-active: #6C47FF; --radio-inactive: #D3D5DF;
@@ -27,7 +22,9 @@ body {font-family: var(--main-font); color: var(--title); background: #F8F8FA; m
 .head-center{text-align:center;}
 h2{font-size:1.40em;font-weight:700;color:var(--title);margin-bottom:0;margin-top:0;}
 .form-desc{color:var(--subtitle);font-size:0.99em;margin:7px 0 24px 0;}
+/* Steps barra só no desktop */
 .steps-bar{display:flex;justify-content:center;align-items:center;gap:2px;margin:16px 0 25px 0;position:relative;}
+@media (max-width: 700px) {.steps-bar {display: none !important;}}
 .step-backbtn{background:none;border:none;outline:none;display:flex;align-items:center;justify-content:center;position: absolute;left:-53px;top:50%;transform:translateY(-50%);cursor:pointer;padding:8px;z-index:3;opacity:1;}
 .step-backbtn:disabled{opacity:.3;}
 .step-bullet{display:flex;align-items:center;gap:9px;padding:8px 20px 8px 12px;cursor:pointer;background:none;border:none;transition:.15s;}
@@ -38,7 +35,7 @@ h2{font-size:1.40em;font-weight:700;color:var(--title);margin-bottom:0;margin-to
 .step-bullet.active .step-label{color:var(--title);}
 .step-bullet.completed .step-label{color:var(--switch-on);}
 .step-arrow{width:19px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--input-stroke);}
-.section-block{margin:0 auto 0 auto;max-width:95vw;width:820px;}
+.section-block{margin:0 auto 0 auto;max-width:95vw;width:720px;}
 .block-title{color:var(--title);font-weight:600;margin:0 0 10px 0;font-size:1.08em;}
 label{color:var(--label);font-weight:500;margin-bottom:6px;font-size:0.98em;display:block;}
 input,select,textarea{width:100%;padding:13px 12px;box-sizing:border-box;font-family:var(--main-font);font-size:1em;color:var(--title);border-radius:var(--input-radius);border:1.7px solid var(--input-stroke);background:var(--input-bg);margin:0;transition:border-color .14s,box-shadow .15s;}
@@ -48,38 +45,12 @@ input[type="file"]{background:none;border:none;padding:0;margin-top:5px;}
 input[type="file"]::-webkit-file-upload-button{background:var(--btn-bg);color:var(--btn-color);border-radius:6px;padding:7px 15px;font-weight:600;border:none;cursor:pointer;margin-right:8px;}
 input[type="file"]:hover::-webkit-file-upload-button{background:#222;}
 input[type="file"]:active::-webkit-file-upload-button{background:#444;}
-.steps-bar { flex-wrap: wrap; }
-.step-dot { font-size: 1.3em; width:28px; height:28px; }
-
-@media (min-width:700px){
-  .step-dot { font-size:1.8em; width:50px; height:50px; }
-}
+.row-2{display:flex;gap:14px;}
+.row-2 .form-field{flex:1;}
 @media (max-width:700px){
-  .steps-bar { gap: 0.5rem; }
-  .step-label { font-size:.92em; }
-  .step-bullet { padding:6px 9px 6px 8px; }
-  .step-arrow { width:10px; }
+  .row-2 { display:block; gap: 0; }
+  .row-2 .form-field { width:100%; margin-bottom: 18px; }
 }
-@media (max-width:700px){
- .section-block { margin-bottom: 30px;}
-}
-
-/* Mantém 2 colunas no desktop */
-.row-2 { display: flex; gap: 14px; }
-.row-2 .form-field { flex: 1; }
-
-/* MOBILE: Uma coluna só! */
-@media (max-width: 700px) {
-  .row-2 {
-    display: block;
-    gap: 0;
-  }
-  .row-2 .form-field {
-    width: 100%;
-    margin-bottom: 18px;
-  }
-}
-
 .form-field{margin-bottom:19px;position:relative;}
 .custom-radio-group{display:flex;gap:17px;}
 .custom-radio{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:1em;font-weight:500;}
@@ -96,28 +67,12 @@ input[type="file"]:active::-webkit-file-upload-button{background:#444;}
 .final-step{text-align:center;border-radius:12px;padding:20px 8px;margin:25px 0 4px 0;background:#F8F8FA;color:var(--btn-bg);font-size:1.08em;}
 .final-step strong{color:var(--btn-bg);}
 .final-step .btn{margin:12px 8px 0 8px;}
-.logo-header {
-  display: block;
-  margin: 0 auto 60px auto;
-  max-width: 170px;
-  width: 60vw;
-  height: auto;
-}
-@media (max-width: 700px) {
-  .logo-header {
-    max-width: 200px;
-    width: 60vw;
-    margin-bottom: 60px;
-  }
-}
-@media (min-width: 1000px) {
-  .logo-header {
-    max-width: 350px;
-    width: 25vw;
-  }
-}
+.logo-header{display:block;margin:0 auto 12px auto;max-width:170px;width:45vw;height:auto;}
+@media (max-width:700px){.logo-header{max-width:110px;width:60vw;margin-bottom:10px;}.section-block{margin-bottom:30px;}}
+@media (min-width:1000px){.logo-header{max-width:210px;width:25vw;}}
 @media (max-width:1100px){.section-block{width:90vw;}.form-card{padding:18px 0;}}
-@media (max-width:700px){.form-card{border-radius:0;box-shadow:none;padding:10px 0;}.section-block{max-width:99vw;}.head-center{padding:10px 8px;}}</style>
+@media (max-width:700px){.form-card{border-radius:0;box-shadow:none;padding:10px 0;}.section-block{max-width:99vw;}.head-center{padding:10px 8px;}}
+</style>
 </head>
 <body>
 <div class="page-shell">
@@ -125,7 +80,7 @@ input[type="file"]:active::-webkit-file-upload-button{background:#444;}
     <div class="head-center">
       <img src="LogoKSTEAM.png" alt="Logo" class="logo-header" />
       <h2>Formulário de Anamnese KSTEAM</h2>
-    <div class="form-desc">Preencha os dados para analisarmos seu perfil.</div>
+      <div class="form-desc">Preencha os dados para analisarmos seu perfil.</div>
       <div class="steps-bar" id="stepsBar">
         <div class="step-bullet active" data-step="0"><span class="step-dot">1</span><span class="step-label">Pessoal</span></div>
         <span class="step-arrow"><svg width="19" height="19" viewBox="0 0 23 23"><polyline points="8,5 15,12 8,19" fill="none" stroke="#E1E5EF" stroke-width="2.2"/></svg></span>
@@ -139,7 +94,7 @@ input[type="file"]:active::-webkit-file-upload-button{background:#444;}
       </div>
     </div>
     <form id="multiStepForm" autocomplete="on" enctype="multipart/form-data">
-      <!-- MULTISTEP SESSÕES -->
+<!-- MULTISTEP SESSÕES -->
       <div id="step-content-0" class="section-block">
         <div class="block-title">Informações pessoais</div>
         <div class="row-2">
@@ -255,8 +210,7 @@ input[type="file"]:active::-webkit-file-upload-button{background:#444;}
           <label>Faça upload de fotos do seu físico (frente, costas e lateral)*:</label>
           <input required type="file" name="Fotos" multiple accept="image/png, image/jpeg, image/jpg">
         </div>
-      </div>
-      <div id="step-final" class="final-step" style="display:none;">
+      </div>      <div id="step-final" class="final-step" style="display:none;">
         <div>
           <strong>Finalize seu envio manual:</strong><br><br>
           Seu formulário está pronto, mas <b>não foi enviado automaticamente</b>! <br>
@@ -283,6 +237,10 @@ const nextBtn = document.getElementById('nextBtn');
 const sendBtn = document.getElementById('sendBtn');
 const stepBackBtn = document.getElementById('stepBackBtn');
 const stepWraps = Array.from({length:totalSteps}).map((_,i)=>document.getElementById('step-content-'+i));
+function scrollToFormTop() {
+  const el = document.querySelector('.form-card');
+  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
 function updateSteps(){
   stepWraps.forEach((el,i)=>{ if(el) el.style.display=i===currentStep?"block":"none"; });
   stepsBar.forEach((el,i)=>{el.classList.toggle("completed",i<currentStep);el.classList.toggle("active",i===currentStep);});
@@ -293,10 +251,31 @@ function updateSteps(){
   if (stepFinal) stepFinal.style.display = "none";
   if (stepBackBtn) stepBackBtn.disabled = currentStep===0;
 }
-if (nextBtn) nextBtn.onclick = ()=>{if(validateStep(currentStep)){if(currentStep<totalSteps-1) currentStep++; updateSteps();}};
-if (backBtn) backBtn.onclick = ()=>{if(currentStep>0) currentStep--; updateSteps();};
-if (stepBackBtn) stepBackBtn.onclick = ()=>{if(currentStep>0) currentStep--; updateSteps();};
-stepsBar.forEach((el,i)=>{el.onclick=()=>{if(validateStep(currentStep)){currentStep=i;updateSteps();}}});
+if (nextBtn) nextBtn.onclick = ()=>{
+  if(validateStep(currentStep)){
+    if(currentStep<totalSteps-1) currentStep++;
+    updateSteps();
+    scrollToFormTop();
+  }
+};
+if (backBtn) backBtn.onclick = ()=>{
+  if(currentStep>0) currentStep--;
+  updateSteps();
+  scrollToFormTop();
+};
+if (stepBackBtn) stepBackBtn.onclick = ()=>{
+  if(currentStep>0) currentStep--;
+  updateSteps();
+  scrollToFormTop();
+};
+stepsBar.forEach((el,i)=>{
+  el.onclick=()=>{
+    if(validateStep(currentStep)){
+      currentStep=i; updateSteps();
+      scrollToFormTop();
+    }
+  }
+});
 function validateStep(idx){
   let valid=true;
   if (stepWraps[idx]) stepWraps[idx].querySelectorAll("[required]").forEach(f=>{
@@ -351,7 +330,7 @@ function generatePDF() {
     }
     y += 4;
   });
-  // IMAGENS - patch robusto
+  // IMAGENS DO FORM
   if (a["_fotos"] && a["_fotos"].length > 0) {
     doc.addPage();
     let pdfW = doc.internal.pageSize.getWidth(), pdfH = doc.internal.pageSize.getHeight();
@@ -363,7 +342,6 @@ function generatePDF() {
     let fileList = a["_fotos"];
     function processImage(idxImg) {
       if (idxImg >= fileList.length) {
-        doc.save(lastFilename);
         lastPDF = doc;
         return;
       }
@@ -392,7 +370,6 @@ function generatePDF() {
     }
     processImage(0);
   } else {
-    doc.save(lastFilename);
     lastPDF = doc;
   }
 }
@@ -423,6 +400,7 @@ function attachFinalStepBtns() {
         if(stepBackBtn) stepBackBtn.style.display = "";
         const stepFinal = document.getElementById("step-final");
         if(stepFinal) stepFinal.style.display = "none";
+        scrollToFormTop();
       };
     } else if (loaded < 20) { loaded+=1; setTimeout(tryAttach,80);}
   }
@@ -441,6 +419,7 @@ form.onsubmit = function(e){
   if(sendBtn) sendBtn.style.display = "none";
   if(stepBackBtn) stepBackBtn.style.display = "none";
   attachFinalStepBtns();
+  scrollToFormTop();
 };
 updateSteps();
 </script>
